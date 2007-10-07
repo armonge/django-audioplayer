@@ -3,6 +3,7 @@ __docformat__ = "restructuredtext en"
 from django.conf import settings
 from django import template
 from django.template import resolve_variable, VariableDoesNotExist
+from django.template.loader import render_to_string
 from urllib import urlencode
 
 register = template.Library()
@@ -24,9 +25,21 @@ class AudioPlayerNode(template.Node):
         '''        
         self.player_url = player_url;
         self.file_url = file_url;
-        self.params = params        
+        self.params = params
+
+        # pythonify 'autostart' and 'loop'
+        if self.params['autostart'].lower() == "true":
+            self.params['autostart'] = "yes"
+        if self.params['autostart'].lower() == "false":
+            self.params['autostart'] = "no"            
+        if self.params['loop'].lower() == "true":
+            self.params['loop'] = "yes"
+        if self.params['loop'].lower() == "false":
+            self.params['loop'] = "no"
         
-    def render(self, context):        
+    def render(self, context):
+        # Check if the given sound file is a template variable,
+        # otherwise use the filename verbatim.
         try:
             self.params["soundFile"] =  resolve_variable(self.file_url, context)
         except VariableDoesNotExist:
@@ -35,12 +48,13 @@ class AudioPlayerNode(template.Node):
         # urlencode the parameter for passing them to the flash app
         player_flash_params = urlencode(self.params)
 
-        # construct the flash object element
-        object_element = '<object type="application/x-shockwave-flash" data="%s" width="%s" height="%s" class="audioplayer"><param name="movie" value="%s" />' % (self.player_url, self.params['width'], self.params['height'], self.player_url)
-        object_element += '<param name="FlashVars" value="%s" />' % player_flash_params
-        object_element += '<param name="quality" value="high" /><param name="menu" value="false" /><param name="wmode" value="transparent" /><param name="bgcolor" value="%s" /></object>' % self.params["bgcolor"].replace("0x", "#")
-        
-        return object_element
+        code_context = { "player_url": self.player_url,
+                         "width": self.params['width'],
+                         "height": self.params['height'],
+                         "flash_vars": player_flash_params,
+                         "bgcolor": self.params["bgcolor"].replace("0x", "#") }        
+        code = render_to_string('audioplayer/audioplayer.html', code_context)        
+        return code
 
 
 def do_audioplayer(parser, token):
@@ -58,37 +72,41 @@ def do_audioplayer(parser, token):
 
     The complete list of parameters:
     
-        ============== ========== ============================================
-        Parameter      Default    Description
-        ============== ========== ============================================
-        autostart      False      The player will automatically open and start
-                                  to play the track (no|yes)
-        loop           False      The track will be looped infinitely (no|yes)
-        bg             0xHHHHHH   Background colour option (where HHHHHH is a
-                                  valid hexadecimal colour value such as
-                                  FFFFFF or 009933)
-        bgcolor        0xHHHHHH   todo
-        leftbg         0xHHHHHH   Left background colour
-        rightbg        0xHHHHHH   Right background colour
-        rightbghover   0xHHHHHH   Right background colour (hover)
-        lefticon       0xHHHHHH   Left icon colour
-        righticon      0xHHHHHH   Right icon colour
-        righticonhover 0xHHHHHH   Right icon colour (hover)
-        text           0xHHHHHH   Text colour
-        slider         0xHHHHHH   Slider colour
-        loader         0xHHHHHH   Loader bar colour
-        track          0xHHHHHH   Progress track colour
-        border         0xHHHHHH   Progress track border colour
-        width          156        The width of the player <object>
-        height         18         The height of the player <object>
-        ============== ========== ============================================
+    ============== ========== ===================================================
+    Parameter      Default    Description
+    ============== ========== ===================================================
+    file           -          The URL of the mp3 file
+    playerUrl      see below  The URL of the player.swf file
+    autostart      False      The player will automatically open and start to
+                              play the track (False|True)
+    loop           False      The track will be looped indefinitely (False|True)
+    bg             0xHHHHHH   Background colour option (where HHHHHH is a valid
+                              hexadecimal colour value such as FFFFFF or 009933)
+    bgcolor        0xHHHHHH   Background colour
+    leftbg         0xHHHHHH   Left background colour
+    rightbg        0xHHHHHH   Right background colour
+    rightbghover   0xHHHHHH   Right background colour (hover)
+    lefticon       0xHHHHHH   Left icon colour
+    righticon      0xHHHHHH   Right icon colour
+    righticonhover 0xHHHHHH   Right icon colour (hover)
+    text           0xHHHHHH   Text colour
+    slider         0xHHHHHH   Slider colour
+    loader         0xHHHHHH   Loader bar colour
+    track          0xHHHHHH   Progress track colour
+    border         0xHHHHHH   Progress track border colour
+    width          156        The width of the player 
+    height         18         The height of the player
 
-    By default the audioplayer tag uses the player.swf found
-    at /media/cms/audioplayer/player.swf
+    ============== ========== ===================================================
 
-    To change that behaviour pass the URL of the player like this::
+    By default the audioplayer tag uses the player.swf found at 
+    ``{{ MEDIA_URL }}/audioplayer/player.swf``.
+
+    To change that behaviour pass the URL of the player using the ``playerUrl``
+    parameter like this::
 
         {% audioplayer file=file.mp3,playerUrl=/foo/bar/player.swf,loop=True %}
+
     """
     
     params = { "autostart": "no",
@@ -110,8 +128,7 @@ def do_audioplayer(parser, token):
                "height": "18"
              }
     
-    #player_url = str("/media/cms/audioplayer/player.swf");
-    player_url = "%s/player.swf" % (settings.MEDIA_URL)
+    player_url = "%s/audioplayer/player.swf" % (settings.MEDIA_URL)
     file_url = str()
     
     try:
@@ -136,11 +153,11 @@ def do_audioplayer(parser, token):
                     if key == "playerUrl":
                         player_url = value
                     if key == "file":
-                        file_url = value                      
+                        file_url = value                                    
                     if not key:
                         raise template.TemplateSyntaxError, "Unknown parameter %s in template tag audioplayer. Available params: %s" % (key, params)                                                
     except ValueError:
-        raise template.TemplateSyntaxError, "%r tag requires 14 arguments" % token.contents[0]
+        raise template.TemplateSyntaxError, "%r tag requires arguments" % token.contents[0]
        
     return AudioPlayerNode(file_url, player_url, params)
 
