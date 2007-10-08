@@ -46,8 +46,8 @@ class AudioPlayerNode(template.Node):
             self.params["soundFile"] =  self.file_url
 
         # urlencode the parameter for passing them to the flash app
-        player_flash_params = urlencode(self.params)
-
+        player_flash_params = urlencode(self.params).replace('&', '&#38;')
+        
         code_context = { "player_url": self.player_url,
                          "width": self.params['width'],
                          "height": self.params['height'],
