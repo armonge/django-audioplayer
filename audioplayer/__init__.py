@@ -116,9 +116,9 @@ varies depending on your parameters)::
         <param name="width" value="180" />
         <param name="height" value="60" />
         <param name="bgcolor" value="f2f2f2" />
-        <param name="flashvars" value="height=18&amp;bg=0xF7F7F7&amp;slider=0xB29461&amp;track=0xFFFFFF&amp;righticon=0x666666&amp;lefticon=0x666666&amp;soundFile=%2Fmedia%2Faudio%2FSuitcase_-_Sheep.mp3&amp;loader=0xEEFFCC&amp;rightbg=0x22C1D6&amp;bgcolor=0xf2f2f2&amp;rightbghover=0x32D1E6&amp;autostart=no&amp;text=0x4F4F4F&amp;leftbg=0xBAFF7B&amp;righticonhover=0x444444&amp;border=0x00FF00&amp;width=156&amp;loop=no" />
+        <param name="flashvars" value="height=18&#38;bg=0xF7F7F7&#38;slider=0xB29461&#38;track=0xFFFFFF&#38;righticon=0x666666&#38;lefticon=0x666666&#38;soundFile=%2Fmedia%2Faudio%2FSuitcase_-_Sheep.mp3&#38;loader=0xEEFFCC&#38;rightbg=0x22C1D6&#38;bgcolor=0xf2f2f2&#38;rightbghover=0x32D1E6&#38;autostart=no&#38;text=0x4F4F4F&#38;leftbg=0xBAFF7B&#38;righticonhover=0x444444&#38;border=0x00FF00&#38;width=156&#38;loop=no" />
         <param name="src" value="/media/cms/audioplayer/player.swf" />
-        <embed type="application/x-shockwave-flash" width="180" height="60" bgcolor="f2f2f2" flashvars="height=18&amp;bg=0xF7F7F7&amp;slider=0xB29461&amp;track=0xFFFFFF&amp;righticon=0x666666&amp;lefticon=0x666666&amp;soundFile=%2Fmedia%2Faudio%2FSuitcase_-_Sheep.mp3&amp;loader=0xEEFFCC&amp;rightbg=0x22C1D6&amp;bgcolor=0xf2f2f2&amp;rightbghover=0x32D1E6&amp;autostart=no&amp;text=0x4F4F4F&amp;leftbg=0xBAFF7B&amp;righticonhover=0x444444&amp;border=0x00FF00&amp;width=156&amp;loop=no" src="/media/cms/audioplayer/player.swf"></embed>
+        <embed type="application/x-shockwave-flash" width="180" height="60" bgcolor="f2f2f2" flashvars="height=18&#38;bg=0xF7F7F7&#38;slider=0xB29461&#38;track=0xFFFFFF&#38;righticon=0x666666&#38;lefticon=0x666666&#38;soundFile=%2Fmedia%2Faudio%2FSuitcase_-_Sheep.mp3&#38;loader=0xEEFFCC&#38;rightbg=0x22C1D6&#38;bgcolor=0xf2f2f2&#38;rightbghover=0x32D1E6&#38;autostart=no&#38;text=0x4F4F4F&#38;leftbg=0xBAFF7B&#38;righticonhover=0x444444&#38;border=0x00FF00&#38;width=156&#38;loop=no" src="/media/cms/audioplayer/player.swf"></embed>
     </object>
 
 Replacing the default code template
