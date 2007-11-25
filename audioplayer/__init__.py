@@ -16,9 +16,11 @@ Download
 The audioplayer app is only available as a tarball. It contains the Django
 application and the flashplayer from 1pixelout_. Also note the Changelog_
 
+- django_audioplayer-0.2.1.tgz_
 - django_audioplayer-0.2.tgz_
 - django_audioplayer-0.1.tgz_
 
+.. _django_audioplayer-0.2.1.tgz: http://www.pyjax.net/download/django_audioplayer-0.2.1.tgz
 .. _django_audioplayer-0.2.tgz: http://www.pyjax.net/download/django_audioplayer-0.2.tgz
 .. _django_audioplayer-0.1.tgz: http://www.pyjax.net/download/django_audioplayer-0.1.tgz
     
@@ -162,6 +164,11 @@ audioplayers out on the web. Here's a list of them:
 
 Changelog
 =========
+
+0.2.1
+-----
+- Ampersands (&) in the flashvars value are now replaced by the entity
+  #&38; in order to produce valid XHTML code.
 
 0.2
 ---
