@@ -200,7 +200,7 @@ Changelog
 0.2.2
 -----
 - Adopted to ``autoescape`` feature in Django development version (tested with
-  ``0.97-pre-SVN-6978``).
+  ``0.97-pre-SVN-6977``).
 - The inserted code is now marked as safe using the
   ``django.utils.safestring.mark_safe()`` method.
 - The current ``autoescape`` setting in the template context is now correctly
