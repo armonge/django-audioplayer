@@ -1,10 +1,9 @@
 __docformat__ = "restructuredtext en"
 
+from urllib import urlencode
 from django.conf import settings
 from django import template
-from django.template import resolve_variable, VariableDoesNotExist
-from django.template.loader import render_to_string
-from urllib import urlencode
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -12,19 +11,20 @@ class AudioPlayerNode(template.Node):
     "Renderer class for the audioplayer template tag."
     
     def __init__(self, file_url, player_url, params):
-        ''' Constructor.
+        """
+        Constructor.
 
-            Parameters:
-        
-                file_url
-                    The filename of the mp3 file.
-                player_url
-                    The url of the flash based player
-                params
-                    The parameters to pass to the flash player
-        '''        
-        self.player_url = player_url;
-        self.file_url = file_url;
+        Parameters:
+
+            file_url
+                The filename of the mp3 file.
+            player_url
+                The url of the flash based player
+            params
+                The parameters to pass to the flash player
+        """
+        self.player_url = player_url
+        self.file_url = template.Variable(file_url)
         self.params = params
 
         # pythonify 'autostart' and 'loop'
@@ -38,27 +38,31 @@ class AudioPlayerNode(template.Node):
             self.params['loop'] = "no"
         
     def render(self, context):
-        # Check if the given sound file is a template variable,
-        # otherwise use the filename verbatim.
+        # Check if the given sound file is a template variable, otherwise use
+        # the filename verbatim.
         try:
-            self.params["soundFile"] =  resolve_variable(self.file_url, context)
-        except VariableDoesNotExist:
+            self.params["soundFile"] =  self.file_url.resolve(context)
+        except template.VariableDoesNotExist:
             self.params["soundFile"] =  self.file_url
 
-        # urlencode the parameter for passing them to the flash app
-        player_flash_params = urlencode(self.params).replace('&', '&#38;')
-        
-        code_context = { "player_url": self.player_url,
-                         "width": self.params['width'],
-                         "height": self.params['height'],
-                         "flash_vars": player_flash_params,
-                         "bgcolor": self.params["bgcolor"].replace("0x", "#") }        
-        code = render_to_string('audioplayer/audioplayer.html', code_context)        
-        return code
-
+        # urlencode the parameters for passing them to the flash app.
+        # Instead of using entity &amp; use unicode &#38;        
+        player_flash_params = mark_safe(urlencode(self.params).replace('&', '&#38;'))
+               
+        t = template.loader.get_template('audioplayer/audioplayer.html')
+        # Create a new context and pass the current autocontext value to it.
+        code_context = template.Context(
+                            {"player_url": self.player_url,
+                             "width": self.params['width'],
+                             "height": self.params['height'],
+                             "flash_vars": player_flash_params,
+                             "bgcolor": self.params["bgcolor"].replace("0x", "#")
+                            }, autoescape=context.autoescape)
+        return t.render(code_context)
 
 def do_audioplayer(parser, token):
-    """This will insert an flash-based mp3 audioplayer in form of an <object>
+    """
+    This will insert an flash-based mp3 audioplayer in form of an <object>
     code block.
 
     Usage::
@@ -96,7 +100,6 @@ def do_audioplayer(parser, token):
     border         0xHHHHHH   Progress track border colour
     width          156        The width of the player 
     height         18         The height of the player
-
     ============== ========== ===================================================
 
     By default the audioplayer tag uses the player.swf found at 
