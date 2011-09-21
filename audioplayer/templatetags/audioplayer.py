@@ -103,7 +103,7 @@ def do_audioplayer(parser, token):
     ============== ========== ===================================================
 
     By default the audioplayer tag uses the player.swf found at 
-    ``{{ MEDIA_URL }}/audioplayer/player.swf``.
+    ``{{ STATIC_URL }}/audioplayer/player.swf``.
 
     To change that behaviour pass the URL of the player using the ``playerUrl``
     parameter like this::
@@ -131,7 +131,7 @@ def do_audioplayer(parser, token):
                "height": "18"
              }
     
-    player_url = "%s/audioplayer/player.swf" % (settings.MEDIA_URL)
+    player_url = "%s/audioplayer/player.swf" % (settings.STATIC_URL)
     file_url = str()
     
     try:
