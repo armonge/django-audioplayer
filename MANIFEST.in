@@ -1,0 +1,2 @@
+recursive-include audioplayer/templates *.html
+recursive-include audioplayer/static *.swf

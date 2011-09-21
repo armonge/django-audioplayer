@@ -5,7 +5,8 @@ setup(
     packages = ["audioplayer"],
     version = "0.2.2",
     description = "A Django application for integrating a Flash based mp3 audioplayer into templates.",
-    author = "peschler",
+    author = "Andres Reyes Monge",
+    author_email = "armonge@gmail.com",
     url = "http://code.google.com/p/django-audioplayer/",
     keywords = ["django", "flash", "audio"],
     classifiers = [
